@@ -1,10 +1,26 @@
-import { Error, Loader, SongCard } from '../components'
+import {
+  Error,
+  Loader,
+  SongCard,
+} from '../components'
 import { genres } from '../assets/constants'
 
+import { useGetTopChartsQuery } from '../redux/features/services/shazamCore'
+
 const Discover = () => {
-  console.log(genres)
+  const { data, isFetching, error } =
+    useGetTopChartsQuery()
+  console.log(data)
 
   const genreTitle = 'Pop'
+
+  if (isFetching) {
+    return <Loader />
+  }
+
+  if (error) {
+    return <Error />
+  }
 
   return (
     <div className="flex flex-col">
@@ -18,15 +34,22 @@ const Discover = () => {
           className="bg-black text-gray-300 p-3 text-sm rounded-lg outline-none s:mt-0 mt-5"
         >
           {genres.map((genre) => (
-            <option key={genre.value} value={genre.value}>
+            <option
+              key={genre.value}
+              value={genre.value}
+            >
               {genre.title}
             </option>
           ))}
         </select>
       </div>
       <div className="flex flex-wrap sm:justify-start justify-center gap-8">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((song, i) => (
-          <SongCard key={song.key} song={song} i={i} />
+        {data?.map((song, i) => (
+          <SongCard
+            key={song.key}
+            song={song}
+            i={i}
+          />
         ))}
       </div>
     </div>
